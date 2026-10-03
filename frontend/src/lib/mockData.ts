@@ -6,6 +6,8 @@ export const initialMockTasks: Task[] = [
     title: 'Welcome to your Remainder App',
     note: 'Explore the dashboard, add new tasks, or save rich text notes.',
     recurrence_pattern: 'once',
+    category: 'General Tasks',
+    isPrimary: true,
     status: 'pending',
     created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
     due_date: new Date(Date.now() + 3600000 * 2).toISOString(), // Due in 2 hours

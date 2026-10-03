@@ -1,5 +1,11 @@
-export type RecurrencePattern = 'once' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+export type RecurrencePattern = 'once' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+export type TaskCategory = 'Daily Tasks' | 'Birthday' | 'General Tasks';
 export type TaskStatus = 'pending' | 'completed';
+
+export interface CustomRecurrence {
+  interval: number;
+  unit: 'days' | 'weeks' | 'months' | 'years';
+}
 
 export interface Task {
   id: string;
@@ -7,6 +13,9 @@ export interface Task {
   title: string;
   note?: string | null;
   recurrence_pattern: RecurrencePattern;
+  custom_recurrence?: CustomRecurrence | null;
+  category: TaskCategory;
+  isPrimary: boolean;
   status: TaskStatus;
   created_at: string;
   due_date: string;
@@ -17,6 +26,9 @@ export interface TaskCreateInput {
   title: string;
   note?: string | null;
   recurrence_pattern: RecurrencePattern;
+  custom_recurrence?: CustomRecurrence | null;
+  category: TaskCategory;
+  isPrimary: boolean;
   due_date: string;
 }
 

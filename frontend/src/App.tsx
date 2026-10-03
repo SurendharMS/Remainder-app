@@ -5,7 +5,7 @@ import { Navbar, type NavigationTab } from './components/Navbar';
 import { Home } from './components/Home';
 import { Dashboard } from './components/Dashboard';
 import { CreateTaskView } from './components/CreateTaskView';
-import { HistoryLog } from './components/HistoryLog';
+import { History } from './components/History';
 import { Notes } from './components/Notes';
 
 const AppContent: React.FC = () => {
@@ -45,7 +45,7 @@ const AppContent: React.FC = () => {
                   onNavigateHome={() => setCurrentTab('home')}
                 />
               )}
-              {currentTab === 'history' && <HistoryLog />}
+              {currentTab === 'history' && <History />}
             </div>
           </main>
         </div>

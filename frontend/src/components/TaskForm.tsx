@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { PlusCircle, Calendar, AlignLeft, Clock } from 'lucide-react';
-import type { RecurrencePattern, TaskCreateInput } from '../types';
+import { PlusCircle, Calendar, AlignLeft, Clock, Star, Folder } from 'lucide-react';
+import type { RecurrencePattern, TaskCreateInput, TaskCategory, CustomRecurrence } from '../types';
 
 interface TaskFormProps {
   onTaskCreated: (task: TaskCreateInput) => Promise<void>;
@@ -11,6 +11,10 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, showHeader = 
   const [title, setTitle] = useState('');
   const [note, setNote] = useState('');
   const [recurrencePattern, setRecurrencePattern] = useState<RecurrencePattern>('once');
+  const [category, setCategory] = useState<TaskCategory>('General Tasks');
+  const [isPrimary, setIsPrimary] = useState(false);
+  const [customInterval, setCustomInterval] = useState<number>(1);
+  const [customUnit, setCustomUnit] = useState<'days' | 'weeks' | 'months' | 'years'>('days');
 
   const defaultDateTime = () => {
     const d = new Date();
@@ -37,12 +41,19 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, showHeader = 
         title: title.trim(),
         note: note.trim() || undefined,
         recurrence_pattern: recurrencePattern,
+        custom_recurrence: recurrencePattern === 'custom' ? { interval: customInterval, unit: customUnit } : null,
+        category,
+        isPrimary,
         due_date: new Date(dueDate).toISOString(),
       });
 
       setTitle('');
       setNote('');
       setRecurrencePattern('once');
+      setCategory('General Tasks');
+      setIsPrimary(false);
+      setCustomInterval(1);
+      setCustomUnit('days');
       setDueDate(defaultDateTime());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create task');
@@ -91,6 +102,47 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, showHeader = 
           />
         </div>
 
+        {/* Primary Checkbox */}
+        <div className="flex items-center gap-3 mt-2">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isPrimary}
+            onClick={() => setIsPrimary(!isPrimary)}
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+              isPrimary ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'
+            }`}
+          >
+            <span className="sr-only">Mark as Primary Task (Important)</span>
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                isPrimary ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5 cursor-pointer" onClick={() => setIsPrimary(!isPrimary)}>
+            <Star className={`w-4 h-4 ${isPrimary ? 'text-yellow-500 fill-current' : 'text-slate-400'}`} />
+            Mark as Primary Task (Important)
+          </label>
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-base font-medium mb-2 flex items-center gap-2 text-slate-700 dark:text-blue-300/90">
+            <Folder className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            Category
+          </label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as TaskCategory)}
+            className="w-full px-5 py-3.5 rounded-xl text-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/40 border bg-white border-blue-200 text-slate-900 dark:bg-black/60 dark:border-blue-900 dark:text-zinc-100 dark:focus:border-blue-600"
+          >
+            <option value="General Tasks">General Tasks</option>
+            <option value="Daily Tasks">Daily Tasks</option>
+            <option value="Birthday">Birthday</option>
+          </select>
+        </div>
+
         {/* Note / Details */}
         <div>
           <label className="block text-base font-medium mb-2 flex items-center gap-2 text-slate-700 dark:text-blue-300/90">
@@ -123,6 +175,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, showHeader = 
               <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>
               <option value="yearly">Yearly</option>
+              <option value="custom">Custom...</option>
             </select>
           </div>
 
@@ -141,6 +194,30 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, showHeader = 
           </div>
         </div>
 
+        {/* Custom Recurrence Inputs */}
+        {recurrencePattern === 'custom' && (
+          <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 mt-2">
+            <span className="text-slate-600 dark:text-slate-300 text-sm">Repeat every</span>
+            <input
+              type="number"
+              min="1"
+              value={customInterval}
+              onChange={(e) => setCustomInterval(parseInt(e.target.value) || 1)}
+              className="w-20 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <select
+              value={customUnit}
+              onChange={(e) => setCustomUnit(e.target.value as any)}
+              className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="days">Days</option>
+              <option value="weeks">Weeks</option>
+              <option value="months">Months</option>
+              <option value="years">Years</option>
+            </select>
+          </div>
+        )}
+
         {/* Submit button */}
         <div className="flex justify-end pt-2">
           <button
@@ -155,3 +232,5 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onTaskCreated, showHeader = 
     </div>
   );
 };
+
+export default TaskForm;

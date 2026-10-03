@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { History, Trash2, CheckCircle2, AlertTriangle, Calendar, Clock, FileText, X } from 'lucide-react';
+import { History as HistoryIcon, Trash2, CheckCircle2, AlertTriangle, Clock, Search } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { getTaskHistory, deleteHistoryTask } from '../lib/api';
 import type { Task } from '../types';
 
-export const HistoryLog: React.FC = () => {
+export const History: React.FC = () => {
   const [historyTasks, setHistoryTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadHistory = async () => {
     try {
@@ -44,16 +45,23 @@ export const HistoryLog: React.FC = () => {
   };
 
   const formatDateShort = (isoString: string) => format(parseISO(isoString), 'MMM d');
-  const formatDateTime = (isoString: string) => format(parseISO(isoString), 'MMM d, yyyy h:mm a');
+
+  const filteredTasks = historyTasks.filter((task) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      task.title.toLowerCase().includes(query) ||
+      (task.note && task.note.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-16 pt-4">
       {/* Header Banner */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3 text-slate-900 dark:text-slate-100">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-              <History className="w-6 h-6 stroke-[2]" />
+              <HistoryIcon className="w-6 h-6 stroke-[2]" />
             </div>
             History Log
           </h1>
@@ -64,10 +72,24 @@ export const HistoryLog: React.FC = () => {
         <button
           type="button"
           onClick={loadHistory}
-          className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 border bg-white hover:bg-slate-50 border-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 shadow-sm"
+          className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 border bg-white hover:bg-slate-50 border-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 shadow-sm self-start md:self-auto"
         >
           Refresh Log
         </button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="h-5 w-5 text-slate-400" />
+        </div>
+        <input
+          type="text"
+          placeholder="Search history by title or notes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-3 rounded-xl border bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-600 transition-colors"
+        />
       </div>
 
       {error && (
@@ -118,9 +140,13 @@ export const HistoryLog: React.FC = () => {
         <div className="text-center py-12">
           <p className="text-slate-500 dark:text-slate-400">No completed tasks yet. Check off items in your Dashboard.</p>
         </div>
+      ) : filteredTasks.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-slate-500 dark:text-slate-400">No tasks match your search.</p>
+        </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {historyTasks.map((task) => (
+          {filteredTasks.map((task) => (
             <div
               key={task.id}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-900/30 group"
@@ -164,4 +190,4 @@ export const HistoryLog: React.FC = () => {
   );
 };
 
-export default HistoryLog;
+export default History;

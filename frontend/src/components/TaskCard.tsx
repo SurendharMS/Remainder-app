@@ -80,7 +80,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onCardClic
             handleCardClick();
           }
         }}
-        className={`bg-white border border-slate-200 text-slate-800 shadow-sm rounded-xl transition-all duration-300 ease-in-out dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 p-6 mb-4 cursor-pointer group hover:border-blue-300 dark:hover:border-slate-600 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-900/30 ${
+        className={`bg-white border border-slate-200 text-slate-800 shadow-md rounded-xl transition-all duration-300 ease-in-out dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:shadow-none p-6 mb-4 cursor-pointer group hover:border-blue-300 dark:hover:border-slate-600 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-blue-900/30 ${
           isCompleting
             ? 'opacity-0 translate-x-5 transition-all duration-500 pointer-events-none'
             : 'opacity-100 translate-x-0'
@@ -107,6 +107,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onCardClic
             <div className="flex items-start justify-between gap-3">
               <h3 className="font-semibold text-lg tracking-tight leading-snug text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {task.title}
+                {task.isPrimary && <span className="text-blue-400 dark:text-blue-300 font-medium"> (Primary)</span>}
               </h3>
               <div className="flex-shrink-0">
                 {renderRecurrenceBadge(task.recurrence_pattern)}
