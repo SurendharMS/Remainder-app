@@ -7,7 +7,8 @@ import type {
   ImportantDateCreateInput,
 } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL: string =
+  import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // In-memory state for local preview bypass mode
 let mockTasks: Task[] = [...initialMockTasks];
