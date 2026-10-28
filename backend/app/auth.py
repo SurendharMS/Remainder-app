@@ -34,13 +34,16 @@ async def get_current_authorized_user(
                 detail=f"Forbidden: GitHub user '{username_claim}' is not authorized."
             )
 
-    # Method 1: Verify using Supabase JWT Secret if configured
-    if settings.SUPABASE_JWT_SECRET:
+    # Method 1: Verify using Supabase JWT Secret if configured (and not a placeholder)
+    if settings.SUPABASE_JWT_SECRET and settings.SUPABASE_JWT_SECRET != "your-supabase-jwt-secret":
         try:
+            unverified_header = jwt.get_unverified_header(token)
+            token_alg = unverified_header.get("alg", "HS256")
+            allowed_algs = list(set(["HS256", "RS256", "ES256", token_alg]))
             payload = jwt.decode(
                 token,
                 settings.SUPABASE_JWT_SECRET,
-                algorithms=["HS256"],
+                algorithms=allowed_algs,
                 audience="authenticated"
             )
             user_id = payload.get("sub")
@@ -56,11 +59,9 @@ async def get_current_authorized_user(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Authentication token has expired. Please sign in again."
             )
-        except jwt.InvalidTokenError as e:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid authentication token: {str(e)}"
-            )
+        except Exception:
+            # Fall through to Supabase Auth API verification if local secret check fails
+            pass
 
     # Method 2: Fallback to Supabase Auth API validation
     if not github_username and settings.SUPABASE_URL and (settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY):
@@ -89,8 +90,8 @@ async def get_current_authorized_user(
 
     if not github_username:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Forbidden: GitHub username could not be determined from credentials."
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication session. Please sign in again."
         )
 
     # STRICT SINGLE-USER CHECK: Must be Surendhar2252

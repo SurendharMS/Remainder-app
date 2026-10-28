@@ -18,8 +18,11 @@ export const History: React.FC = () => {
       setError(null);
       const data = await getTaskHistory();
       setHistoryTasks(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load task history');
+    } catch (err: unknown) {
+      const errorObj = err as { status?: number; message?: string };
+      if (errorObj?.status !== 401) {
+        setError(err instanceof Error ? err.message : 'Failed to load task history');
+      }
     } finally {
       setIsLoading(false);
     }

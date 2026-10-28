@@ -75,6 +75,19 @@ async function apiClient<T>(
         ? String((errorDetail as { detail: unknown }).detail)
         : `Request failed with status ${response.status}`;
 
+    // Gracefully handle 401 Unauthorized (expired or invalid session token)
+    if (response.status === 401) {
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        // ignore sign-out error
+      }
+      localStorage.removeItem('dev_mode');
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
+    }
+
     throw new ApiError(errorMessage, response.status, errorDetail);
   }
 
@@ -156,6 +169,7 @@ export async function createTask(taskInput: TaskCreateInput): Promise<Task> {
       id: `mock-task-${Date.now()}`,
       title: taskInput.title,
       note: taskInput.note || null,
+      tag: taskInput.tag || null,
       recurrence_pattern: taskInput.recurrence_pattern,
       custom_recurrence: taskInput.custom_recurrence,
       category: taskInput.category,

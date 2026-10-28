@@ -8,6 +8,7 @@ TaskStatus = Literal["pending", "completed"]
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     note: Optional[str] = None
+    tag: Optional[str] = Field(None, max_length=50)
     recurrence_pattern: RecurrencePattern = "once"
     due_date: datetime
 
@@ -17,6 +18,7 @@ class TaskCreate(TaskBase):
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     note: Optional[str] = None
+    tag: Optional[str] = None
     recurrence_pattern: Optional[RecurrencePattern] = None
     due_date: Optional[datetime] = None
     status: Optional[TaskStatus] = None
@@ -28,6 +30,7 @@ class TaskResponse(BaseModel):
     user_id: Optional[str] = None
     title: str
     note: Optional[str] = None
+    tag: Optional[str] = None
     recurrence_pattern: RecurrencePattern
     status: TaskStatus
     created_at: datetime

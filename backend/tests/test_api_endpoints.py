@@ -26,17 +26,20 @@ def test_unauthorized_user_blocked():
     assert "Forbidden" in response.json()["detail"]
 
 def test_create_and_get_tasks():
-    # 1. Create a once task
+    # 1. Create a once task with tag
     due = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
     new_task = {
         "title": "Fix critical production bug",
         "note": "Verify auth tokens and RLS",
+        "tag": "Work",
         "recurrence_pattern": "once",
         "due_date": due,
     }
     create_resp = client.post("/api/tasks", json=new_task, headers=AUTH_HEADER_SURENDHAR)
     assert create_resp.status_code == 201
-    created_id = create_resp.json()["id"]
+    created_task = create_resp.json()
+    created_id = created_task["id"]
+    assert created_task["tag"] == "Work"
 
     # 2. Get pending tasks
     get_resp = client.get("/api/tasks", headers=AUTH_HEADER_SURENDHAR)

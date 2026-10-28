@@ -5,6 +5,7 @@ export const initialMockTasks: Task[] = [
     id: 'mock-task-1',
     title: 'Welcome to your Remainder App',
     note: 'Explore the dashboard, add new tasks, or save rich text notes.',
+    tag: 'Work',
     recurrence_pattern: 'once',
     category: 'General Tasks',
     isPrimary: true,

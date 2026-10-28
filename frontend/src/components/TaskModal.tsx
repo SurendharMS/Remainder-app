@@ -1,5 +1,5 @@
-﻿import React, { useEffect } from 'react';
-import { X, Clock, Repeat, AlertCircle, Calendar, FileText } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { X, Clock, Repeat, AlertCircle, Calendar, FileText, Tag as TagIcon } from 'lucide-react';
 import { format, isPast, parseISO } from 'date-fns';
 import type { Task } from '../types';
 
@@ -63,6 +63,12 @@ export const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose }) =
         <div className="flex items-start justify-between gap-4 p-6 border-b border-slate-100 dark:border-slate-800">
           <div className="space-y-2 min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
+              {task.tag && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  <TagIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  {task.tag}
+                </span>
+              )}
               {renderRecurrenceBadge(task.recurrence_pattern)}
               <span
                 className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${

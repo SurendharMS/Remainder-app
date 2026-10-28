@@ -46,8 +46,11 @@ export const EventCountdownWidget: React.FC<EventCountdownWidgetProps> = ({ comp
       setNewEventDate('');
       setShowAddModal(false);
       await loadDates();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save date');
+    } catch (err: unknown) {
+      const errorObj = err as { status?: number; message?: string };
+      if (errorObj?.status !== 401) {
+        setError(err instanceof Error ? err.message : 'Failed to save date');
+      }
     }
   };
 

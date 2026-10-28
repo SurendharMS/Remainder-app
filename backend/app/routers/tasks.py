@@ -49,6 +49,7 @@ async def create_task(
     data = {
         "title": task_in.title,
         "note": task_in.note,
+        "tag": task_in.tag,
         "recurrence_pattern": task_in.recurrence_pattern,
         "due_date": task_in.due_date.isoformat(),
         "status": "pending",

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Clock, Repeat, AlertCircle } from 'lucide-react';
+import { Check, Clock, Repeat, AlertCircle, Tag as TagIcon } from 'lucide-react';
 import { format, isPast, parseISO } from 'date-fns';
 import { TaskModal } from './TaskModal';
 import type { Task } from '../types';
@@ -107,9 +107,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onCardClic
             <div className="flex items-start justify-between gap-3">
               <h3 className="font-semibold text-lg tracking-tight leading-snug text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {task.title}
-                {task.isPrimary && <span className="text-blue-400 dark:text-blue-300 font-medium"> (Primary)</span>}
+                {task.isPrimary && <span className="text-amber-500 dark:text-amber-400 font-medium text-sm"> ★ Primary</span>}
               </h3>
-              <div className="flex-shrink-0">
+              <div className="flex flex-wrap items-center gap-1.5 flex-shrink-0">
+                {task.tag && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800">
+                    <TagIcon className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                    {task.tag}
+                  </span>
+                )}
                 {renderRecurrenceBadge(task.recurrence_pattern)}
               </div>
             </div>

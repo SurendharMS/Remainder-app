@@ -13,12 +13,16 @@ CREATE TABLE IF NOT EXISTS public.tasks (
     user_id UUID REFERENCES auth.users(id) DEFAULT auth.uid(),
     title TEXT NOT NULL,
     note TEXT,
+    tag TEXT,
     recurrence_pattern task_recurrence NOT NULL DEFAULT 'once',
     status task_status NOT NULL DEFAULT 'pending',
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     due_date TIMESTAMPTZ NOT NULL,
     completed_at TIMESTAMPTZ
 );
+
+-- Migration for existing deployments:
+-- ALTER TABLE public.tasks ADD COLUMN IF NOT EXISTS tag TEXT;
 
 -- Index for fast queries on status, due_date, and completed_at
 CREATE INDEX IF NOT EXISTS idx_tasks_status_due_date ON public.tasks (status, due_date);

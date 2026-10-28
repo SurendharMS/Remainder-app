@@ -12,6 +12,7 @@ export interface Task {
   user_id?: string;
   title: string;
   note?: string | null;
+  tag?: string | null;
   recurrence_pattern: RecurrencePattern;
   custom_recurrence?: CustomRecurrence | null;
   category: TaskCategory;
@@ -25,6 +26,7 @@ export interface Task {
 export interface TaskCreateInput {
   title: string;
   note?: string | null;
+  tag?: string | null;
   recurrence_pattern: RecurrencePattern;
   custom_recurrence?: CustomRecurrence | null;
   category: TaskCategory;
