@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PlusCircle, Calendar, AlignLeft, Clock, Star, Folder } from 'lucide-react';
-import type { RecurrencePattern, TaskCreateInput, TaskCategory, CustomRecurrence } from '../types';
+import type { RecurrencePattern, TaskCreateInput, TaskCategory } from '../types';
 
 interface TaskFormProps {
   onTaskCreated: (task: TaskCreateInput) => Promise<void>;

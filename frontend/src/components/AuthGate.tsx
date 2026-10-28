@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Github, ShieldAlert, Lock, Sparkles, Terminal } from 'lucide-react';
+import { Github, ShieldAlert, Lock, Sparkles } from 'lucide-react';
 import { supabase, signInWithGitHub, signOut } from '../lib/supabase';
 import { isDevMode, setDevMode } from '../lib/api';
 
@@ -35,11 +35,6 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     setDevBypassActive(true);
   };
 
-  const handleExitDevBypass = () => {
-    setDevMode(false);
-    setDevBypassActive(false);
-    window.location.reload();
-  };
 
   if (loading) {
     return (

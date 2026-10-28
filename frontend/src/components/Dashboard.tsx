@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Filter, Plus, AlertCircle, RefreshCw } from 'lucide-react';
+import { Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { isPast, parseISO } from 'date-fns';
 import { TaskCard } from './TaskCard';
 import { getPendingTasks, completeTask } from '../lib/api';

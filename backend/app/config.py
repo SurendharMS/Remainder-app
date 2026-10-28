@@ -8,9 +8,15 @@ load_dotenv()
 def parse_cors_origins() -> List[str]:
     default_origins = [
         "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
         "http://localhost:3000",
+        "http://localhost:3001",
         "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:5175",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
     ]
     raw_env = os.getenv("CORS_ORIGINS")
     if raw_env:
